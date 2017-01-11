@@ -18,12 +18,17 @@ public class AsyncTest : MonoBehaviour
     void Start()
     {
         luaenv = new LuaEnv();
-        luaenv.DoString("require 'async_test'");
+
+        luaenv.DoString("require 'async_test'");   //! 加载lua测试文件
+
+		//! for test
+		//! MessageBox.ShowAlertBox("confirm?", "title");
     }
 
     // Update is called once per frame
     void Update()
     {
+		//! for tesst
         if (luaenv != null)
         {
             luaenv.Tick();

@@ -122,7 +122,9 @@ namespace XLuaTest
                     return ...
                 end
 
-                function add(a, b) return a + b end
+                function add(a, b) 
+					return a + b 
+				end
             
                 function array_exchange(arr)
                     arr[0], arr[1] = arr[1], arr[0]
@@ -155,17 +157,17 @@ namespace XLuaTest
                 GDATA = 1234;
             ");
 
-            luaenv.Global.Set("monoBehaviour", this);
+            luaenv.Global.Set("monoBehaviour", this);    //! 绑定 this 到 lua的 monoBehaviour
 
-            luaenv.Global.Get("id", out f1);
-            luaenv.Global.Get("id", out f2);
-            luaenv.Global.Get("id", out f3);
-            luaenv.Global.Get("id", out f4);
-            luaenv.Global.Get("id", out f5);
+            luaenv.Global.Get("id", out f1);   //! 绑定lua的"id" 函数到 f1
+			luaenv.Global.Get("id", out f2);   //! 绑定lua的"id" 函数到 f2
+			luaenv.Global.Get("id", out f3);   //! 绑定lua的"id" 函数到 f3
+			luaenv.Global.Get("id", out f4);   //! 绑定lua的"id" 函数到 f4
+			luaenv.Global.Get("id", out f5);   //! 绑定lua的"id" 函数到 f5
             luaenv.Global.Get("array_exchange", out farr);
             luaenv.Global.Get("lua_access_csharp", out flua);
-            luaenv.Global.Get("exchanger", out ie);
-            luaenv.Global.Get("add", out add);
+			luaenv.Global.Get("exchanger", out ie);  //! 绑定lua的 exchanger， 到ie（Interface） interface
+            luaenv.Global.Get("add", out add);       //! 
 
             luaenv.Global.Set("g_int", 123);
             luaenv.Global.Set(123, 456);

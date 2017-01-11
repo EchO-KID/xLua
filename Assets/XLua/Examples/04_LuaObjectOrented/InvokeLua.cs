@@ -43,7 +43,7 @@ public class InvokeLua : MonoBehaviour
     {
         LuaEnv luaenv = new LuaEnv();
         luaenv.DoString(script);
-        CalcNew calc_new = luaenv.Global.GetInPath<CalcNew>("Calc.New");
+        CalcNew calc_new = luaenv.Global.GetInPath<CalcNew>("Calc.New");   //! C# 调用lua的方法，通过get delegate的形式来实现
         ICalc calc = calc_new(10, "hi", "john"); //constructor
         Debug.Log("sum(*10) =" + calc.Add(1, 2));
         calc.Mult = 100;
