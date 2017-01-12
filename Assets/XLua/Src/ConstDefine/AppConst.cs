@@ -26,7 +26,7 @@ namespace LuaFramework {
         public const int GameFrameRate = 30;                       //游戏帧频
 
         public const string AppName = "LuaFramework";               //应用程序名称
-        public const string LuaTempDir = "Lua/";                    //临时目录
+        public const string LuaTempDir = "TmpLua/";                    //临时目录
         public const string ExtName = ".unity3d";                   //资源扩展名
         public const string AppPrefix = AppName + "_";              //应用程序前缀
 		public const string WebUrl = "E:/hotupdate/";               //测试更新地址
@@ -37,7 +37,7 @@ namespace LuaFramework {
 
         public static string FrameworkRoot {
             get {
-                return Application.dataPath + "/" + AppName;
+                return Application.dataPath;
             }
         }
     }

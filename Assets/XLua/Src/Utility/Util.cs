@@ -189,7 +189,7 @@ namespace LuaFramework {
             get {
 
 				string game = AppConst.AppName.ToLower();
-				string dataPath = "c:/" + game + "/";
+				string dataPath = Application.streamingAssetsPath + "/";
                 if (Application.isMobilePlatform) {
 					dataPath =  Application.persistentDataPath + "/" + game + "/";   //! 储存目录/game/
                 }
