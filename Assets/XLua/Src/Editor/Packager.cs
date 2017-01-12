@@ -71,8 +71,7 @@ public class Packager {
         if (Directory.Exists(Util.DataPath)) {
             Directory.Delete(Util.DataPath, true);
         }
-
-
+			
 		//! 清除之前的bundle
         string streamPath = Application.streamingAssetsPath;
         if (Directory.Exists(streamPath)) {
@@ -82,6 +81,7 @@ public class Packager {
 		//! 刷新 Asset
         AssetDatabase.Refresh();
 
+		//! false 
         if (AppConst.ExampleMode) {
             HandleExampleBundle(target);
         }
@@ -100,24 +100,70 @@ public class Packager {
     static void HandleBundle() {
         BuildLuaBundles();
         string luaPath = AppDataPath + "/StreamingAssets/lua/";
-        string[] luaPaths = { AppDataPath + "/LuaFramework/lua/", 
-                              AppDataPath + "/LuaFramework/Tolua/Lua/" };
+        string[] luaPaths = { AppDataPath + "/Hotfix/lua/" };
 
         for (int i = 0; i < luaPaths.Length; i++) {
             paths.Clear(); files.Clear();
             string luaDataPath = luaPaths[i].ToLower();
             Recursive(luaDataPath);
             foreach (string f in files) {
-                if (f.EndsWith(".meta") || f.EndsWith(".lua")) continue;
+                if (f.EndsWith(".meta") || f.EndsWith(".lua"))    //! 跳过meta文件和lua文件
+					continue;
                 string newfile = f.Replace(luaDataPath, "");
+
                 string path = Path.GetDirectoryName(luaPath + newfile);
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                if (!Directory.Exists(path))            
+					Directory.CreateDirectory(path);
 
                 string destfile = path + "/" + Path.GetFileName(f);
                 File.Copy(f, destfile, true);
             }
         }
     }
+
+	/// <summary>
+	/// 处理Lua文件
+	/// </summary>
+	static void HandleLuaFile() {
+		string luaPath = AppDataPath + "/StreamingAssets/lua/";
+
+		//----------复制Lua文件----------------
+		if (!Directory.Exists(luaPath)) {
+			Directory.CreateDirectory(luaPath); 
+		}
+		string[] luaPaths = { AppDataPath + "/Hotfix/lua/" };
+
+		for (int i = 0; i < luaPaths.Length; i++) {
+			paths.Clear(); files.Clear();
+			string luaDataPath = luaPaths[i].ToLower();
+			Recursive(luaDataPath);
+			int n = 0;
+			foreach (string f in files) {
+				if (f.EndsWith(".meta"))        //! 忽略meta文件
+					continue;
+				string newfile = f.Replace(luaDataPath, "");
+				string newpath = luaPath + newfile;
+				string path = Path.GetDirectoryName(newpath);
+
+				if (!Directory.Exists(path)) 
+					Directory.CreateDirectory(path);
+
+				if (File.Exists(newpath)) {
+					File.Delete(newpath);
+				}
+
+				//! 是否encode，暂时不encode
+				if (false) {
+					EncodeLuaFile(f, newpath);
+				} else {
+					File.Copy(f, newpath, true);
+				}
+				UpdateProgress(n++, files.Count, newpath);
+			} 
+		}
+		EditorUtility.ClearProgressBar();
+		AssetDatabase.Refresh();
+	}
 
     static void ClearAllLuaFiles() {
         string osPath = Application.streamingAssetsPath + "/" + LuaConst.osDir;
@@ -287,48 +333,7 @@ public class Packager {
         ///-------------------------------刷新---------------------------------------
         BuildPipeline.PopAssetDependencies();
     }
-
-    /// <summary>
-    /// 处理Lua文件
-    /// </summary>
-    static void HandleLuaFile() {
-        string luaPath = AppDataPath + "/StreamingAssets/lua/";
-
-        //----------复制Lua文件----------------
-        if (!Directory.Exists(luaPath)) {
-            Directory.CreateDirectory(luaPath); 
-        }
-        string[] luaPaths = { AppDataPath + "/LuaFramework/lua/", 
-                              AppDataPath + "/LuaFramework/Tolua/Lua/" };
-
-        for (int i = 0; i < luaPaths.Length; i++) {
-            paths.Clear(); files.Clear();
-            string luaDataPath = luaPaths[i].ToLower();
-            Recursive(luaDataPath);
-            int n = 0;
-            foreach (string f in files) {
-                if (f.EndsWith(".meta")) continue;
-                string newfile = f.Replace(luaDataPath, "");
-                string newpath = luaPath + newfile;
-                string path = Path.GetDirectoryName(newpath);
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-
-                if (File.Exists(newpath)) {
-                    File.Delete(newpath);
-                }
-
-				//! 是否encode，暂时不encode
-                if (false) {
-                    EncodeLuaFile(f, newpath);
-                } else {
-                    File.Copy(f, newpath, true);
-                }
-                UpdateProgress(n++, files.Count, newpath);
-            } 
-        }
-        EditorUtility.ClearProgressBar();
-        AssetDatabase.Refresh();
-    }
+		
 
 	/// <summary>
 	/// 计算字符串的MD5值
@@ -368,10 +373,12 @@ public class Packager {
 	}
 
     static void BuildFileIndex() {
+		
         string resPath = AppDataPath + "/StreamingAssets/";
         ///----------------------创建文件列表-----------------------
         string newFilePath = resPath + "/files.txt";
-        if (File.Exists(newFilePath)) File.Delete(newFilePath);
+        if (File.Exists(newFilePath)) 
+			File.Delete(newFilePath);
 
         paths.Clear(); files.Clear();
         Recursive(resPath);
@@ -381,13 +388,15 @@ public class Packager {
         for (int i = 0; i < files.Count; i++) {
             string file = files[i];
             string ext = Path.GetExtension(file);
-            if (file.EndsWith(".meta") || file.Contains(".DS_Store")) continue;
+            if (file.EndsWith(".meta") || file.Contains(".DS_Store"))   //! 忽略meta文件 .DS_Store文件
+				continue;
 
 			string md5 = md5file(file);
             string value = file.Replace(resPath, string.Empty);
             sw.WriteLine(value + "|" + md5);
         }
-        sw.Close(); fs.Close();
+        sw.Close();
+		fs.Close();
     }
 
     /// <summary>
