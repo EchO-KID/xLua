@@ -4,7 +4,7 @@
 -- http://opensource.org/licenses/MIT
 -- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
-local util = require 'xlua.util'
+local util = require 'xlua.util'          -- require util package
 local message_box = require 'message_box'
 
 -------------------------async_recharge-----------------------------
@@ -13,7 +13,7 @@ local function async_recharge(num, cb) --模拟的异步充值
     cb(true, num)
 end
 
-local recharge = util.async_to_sync(async_recharge)
+local recharge = util.async_to_sync(async_recharge)         
 -------------------------async_recharge end----------------------------
 local buy = function()
     message_box.alert("余额提醒","您余额不足，请充值！")
@@ -26,6 +26,7 @@ local buy = function()
 	    message_box.alert("提示","取消充值！")
 	end
 end
+
 --将按钮监听点击事件，绑定buy方法
-CS.UnityEngine.GameObject.Find("Button"):GetComponent("Button").onClick:AddListener(util.coroutine_call(buy))
+CS.UnityEngine.GameObject.Find("Button"):GetComponent("Button").onClick:AddListener(util.coroutine_call(buy))  -- 协同监听回调，在协同中进行
 

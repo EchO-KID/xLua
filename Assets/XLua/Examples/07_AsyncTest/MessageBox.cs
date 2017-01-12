@@ -87,6 +87,7 @@ public class MessageBox : MonoBehaviour{
             cancelBtn.onClick.AddListener(oncancel);
         }
     }
+
 }
 
 public static class MessageBoxConfig

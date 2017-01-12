@@ -10,7 +10,7 @@ public class Coroutine : MonoBehaviour {
     void Start()
     {
         luaenv = new LuaEnv();
-        luaenv.DoString("require 'coruntine_test'");
+        luaenv.DoString("require 'coruntine_test'");  //! 执行coruntine_test.lua.txt
     }
 
     // Update is called once per frame
