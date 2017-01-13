@@ -196,7 +196,7 @@ public class Packager {
     }
 
     static void CreateStreamDir(string dir) {
-        dir = Application.streamingAssetsPath + "/" + dir;
+		dir = Application.streamingAssetsPath + "/" + dir;
 
         if (!File.Exists(dir)) {
             Directory.CreateDirectory(dir);
@@ -236,7 +236,13 @@ public class Packager {
 
 		//! 在StreamingAsset中创建Lua和TmpLua目录
         CreateStreamDir("Lua/");      
-        CreateStreamDir(AppConst.LuaTempDir); 
+        //! CreateStreamDir(AppConst.LuaTempDir); 
+
+		//! asset 目录下创建临时目录Tmp
+		string tmpLuaDir = Application.dataPath + "/" + AppConst.LuaTempDir;
+		if (!File.Exists(tmpLuaDir)) {
+			Directory.CreateDirectory(tmpLuaDir);
+		}
 
 		//! 
         string dir = Application.persistentDataPath;
@@ -244,28 +250,26 @@ public class Packager {
             Directory.CreateDirectory(dir);
         }
 
-		string streamDir = Application.streamingAssetsPath + "/" + AppConst.LuaTempDir;   //! "E:/xLua/Assets /   Lua/"
-
         //! CopyLuaBytesFiles(CustomSettings.luaDir, streamDir);
-        CopyLuaBytesFiles(CustomSettings.FrameworkPath + "/Hotfix/Lua", streamDir);
+		CopyLuaBytesFiles(CustomSettings.FrameworkPath + "/Hotfix/Lua", tmpLuaDir);  //! copy lua文件到临时目录下（过程中encode）
 
         AssetDatabase.Refresh();
-		string[] dirs = Directory.GetDirectories(streamDir, "*", SearchOption.AllDirectories);   //! "E:/xLua/Assets/Lua/"
+		string[] dirs = Directory.GetDirectories(tmpLuaDir, "*", SearchOption.AllDirectories);   //! 获取streamingasset目录下所有的目录。
 
-        for (int i = 0; i < dirs.Length; i++) {
-            string str = dirs[i].Remove(0, streamDir.Length);
+        for (int i = 0; i < dirs.Length; i++) {                           //! 遍历streamingasset下所有的文件夹，打包lua文件      
+			string str = dirs[i].Remove(0, tmpLuaDir.Length);
             BuildLuaBundle(str);
         }
 
-        BuildLuaBundle(null);
-        Directory.Delete(streamDir, true);
+        BuildLuaBundle(null);             //! 
+		Directory.Delete(tmpLuaDir, true);   //! 删除Assets目录下的临时目录
         AssetDatabase.Refresh();
     }
 
     static void BuildLuaBundle(string dir) {
         BuildAssetBundleOptions options = BuildAssetBundleOptions.CollectDependencies | BuildAssetBundleOptions.CompleteAssets |
                                           BuildAssetBundleOptions.DeterministicAssetBundle | BuildAssetBundleOptions.UncompressedAssetBundle;
-		string path = "Assets/StreamingAssets/" + AppConst.LuaTempDir + dir;
+		string path = "Assets/" + AppConst.LuaTempDir + dir;
         string[] files = Directory.GetFiles(path, "*.lua.bytes");
 
 		List<UnityEngine.Object> list = new List<UnityEngine.Object>();

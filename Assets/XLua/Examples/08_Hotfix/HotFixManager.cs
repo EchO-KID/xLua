@@ -194,12 +194,30 @@ public class HotFixManager : MonoBehaviour {
 	//! 下载完成
 	//! 后面该deletegate
 	void OnDownloadComplete(){
-		string uri = Util.DataPath + "Lua/lua" + AppConst.ExtName;
-		Debug.LogWarning("LoadFile::>> " + uri);
-		AssetBundle luaAB = LoadBundle ("Lua/lua");
 
-		UnityEngine.Object obj = luaAB.LoadAsset ("Lua/HotfixTest");
-		Debug.LogWarning ("doString:" + obj); 
+		//! string strPath = Application.dataPath + "/Hotfix/Lua/HotfixTest.lua";
+		//! Debug.Log ("file path:" + strPath);
+		//! 
+		//! //! for test 直接读取
+		//! string strText = File.ReadAllText(strPath);
+		//! Debug.Log ("read text:" + strText);
+		//! luaenv.DoString (strText);
+
+		string uri = Util.DataPath + "Lua/lua" + AppConst.ExtName;
+		Debug.Log("LoadFile::>> " + uri);
+		
+		AssetBundle luaAB = LoadBundle ("Lua/lua");
+	
+		UnityEngine.Object obj1 = luaAB.LoadAsset ("HotfixTest.lua.bytes");
+
+		if ( obj1!=null )  
+			Debug.Log ("LoadAsset:\"HotfixTest.lua\" success!");     //! 是否成功加载HotfixTest
+
+		//! read as TextAssets
+		TextAsset txtAsset = luaAB.LoadAsset<TextAsset>("HotfixTest.lua.bytes");
+		Debug.Log ("read lua text:" + txtAsset.text);
+
+		luaenv.DoString (txtAsset.text);    //! 打补丁。
 
 
 		//! 装载资源
